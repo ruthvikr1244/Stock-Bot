@@ -56,7 +56,8 @@ while True:
 
         if currentUserPrice > ogPrice:
             if currentUserPrice > startUserPrice:
-                wallet += (currentUserPrice-startUserPrice)
+                income = btcPurchased*currentPrice
+                wallet += (income-startUserPrice)
                 btcPurchased = ogAmount / currentPrice
                 startUserPrice = btcPurchased * currentPrice
                 print("Wallet: ", wallet)
@@ -71,7 +72,8 @@ while True:
 
                 while True:
                     if time.time() > future:
-                        wallet += (currentUserPrice - startUserPrice)
+                        income = btcPurchased * currentPrice
+                        wallet += (income - startUserPrice)
                         print("Wallet: ", wallet)
                         btcPurchased = ogAmount / startPrice
                         startUserPrice = btcPurchased * currentPrice
