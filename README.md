@@ -1,1 +1,1 @@
-# giga-chad_stock-b0t
+# stock_bot
