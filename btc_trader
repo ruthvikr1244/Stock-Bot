@@ -9,7 +9,7 @@ driver.get("https://www.dailyfx.com/bitcoin")
 
 wallet = float(input("How much would you like to invest: "))
 ogAmount = wallet
-workingWallet = 0
+workingWallet = wallet
 
 time.sleep(5)
 
@@ -57,7 +57,7 @@ while True:
         if currentUserPrice > ogPrice:
             if currentUserPrice > startUserPrice:
                 income = btcPurchased*currentPrice
-                wallet += (income-startUserPrice)
+                wallet += (income-workingWallet)
                 btcPurchased = ogAmount / currentPrice
                 startUserPrice = btcPurchased * currentPrice
                 print("Wallet: ", wallet)
@@ -73,7 +73,7 @@ while True:
                 while True:
                     if time.time() > future:
                         income = btcPurchased * currentPrice
-                        wallet += (income - startUserPrice)
+                        wallet += (income - workingWallet)
                         print("Wallet: ", wallet)
                         btcPurchased = ogAmount / startPrice
                         startUserPrice = btcPurchased * currentPrice
