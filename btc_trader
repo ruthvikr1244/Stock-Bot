@@ -1,0 +1,53 @@
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+driver = webdriver.Safari()
+driver.get("https://www.dailyfx.com/bitcoin")
+
+wallet = float(input("How much would you like to invest: "))
+
+time.sleep(5)
+
+btc = driver.find_element_by_xpath('//*[@id="dfx-instrumentPageBar-BITCOIN"]/div[1]/div/div[1]/div[2]/div[1]')
+startPrice = float(btc.get_attribute('data-value'))
+btcPurchased = wallet/startPrice
+startUserPrice = btcPurchased*startPrice
+ogPrice = startUserPrice
+print(startUserPrice)
+
+
+while True:
+
+    currentPrice = float(btc.get_attribute('data-value'))
+    currentUserPrice = btcPurchased*currentPrice
+
+
+
+    if currentUserPrice != startUserPrice:
+
+        if currentUserPrice > ogPrice:
+            wallet += (currentUserPrice-500)
+            print("Wallet: ", wallet)
+
+        elif currentUserPrice < ogPrice:
+
+            now = time.time()
+            future = now + 10
+
+            while True:
+                if time.time() > future:
+                    ogPrice = currentUserPrice
+                    break
+
+        startUserPrice = currentUserPrice
+        print(currentUserPrice)
+
+
+
+
+
+
+
