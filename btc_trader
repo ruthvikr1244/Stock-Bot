@@ -8,6 +8,8 @@ driver = webdriver.Safari()
 driver.get("https://www.dailyfx.com/bitcoin")
 
 wallet = float(input("How much would you like to invest: "))
+ogAmount = wallet
+workingWallet = 0
 
 time.sleep(5)
 
@@ -19,31 +21,68 @@ ogPrice = startUserPrice
 print(startUserPrice)
 
 
+def buy():
+    global wallet
+    global workingWallet
+    global ogAmount
+
+    if wallet >= ogAmount:
+        workingWallet = ogAmount
+        wallet = wallet - ogAmount
+    elif wallet < ogAmount:
+        ogAmount = wallet
+        workingWallet = wallet
+        wallet = 0
+
+def sell():
+    global wallet
+    global workingWallet
+
+    wallet += workingWallet
+    workingWallet = 0
+
+
 while True:
 
     currentPrice = float(btc.get_attribute('data-value'))
     currentUserPrice = btcPurchased*currentPrice
 
-
-
     if currentUserPrice != startUserPrice:
 
+        print("Current Rate: ", currentPrice)
+        print("Current Price: ", currentUserPrice)
+        print("Price Change: ", currentUserPrice-startUserPrice)
+        print("OG Price: ", ogPrice)
+
         if currentUserPrice > ogPrice:
-            wallet += (currentUserPrice-500)
-            print("Wallet: ", wallet)
+            if currentUserPrice > startUserPrice:
+                wallet += (currentUserPrice-startUserPrice)
+                btcPurchased = ogAmount / currentPrice
+                startUserPrice = btcPurchased * currentPrice
+                print("Wallet: ", wallet)
+                continue
 
         elif currentUserPrice < ogPrice:
 
-            now = time.time()
-            future = now + 10
+            if currentUserPrice < startUserPrice:
 
-            while True:
-                if time.time() > future:
-                    ogPrice = currentUserPrice
-                    break
+                now = time.time()
+                future = now + 3
+
+                while True:
+                    if time.time() > future:
+                        wallet += (currentUserPrice - startUserPrice)
+                        print("Wallet: ", wallet)
+                        btcPurchased = ogAmount / startPrice
+                        startUserPrice = btcPurchased * currentPrice
+                        ogPrice = currentUserPrice
+                        break
+                else:
+                    continue
+
 
         startUserPrice = currentUserPrice
-        print(currentUserPrice)
+
 
 
 
