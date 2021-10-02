@@ -71,18 +71,15 @@ while True:
                 future = now + 7
 
                 while True:
-                    if currentUserPrice < ogPrice:
-                        if time.time() > future:
-                            print("Entered OG Lowering")
-                            income = btcPurchased * currentPrice
-                            wallet += (income - workingWallet)
-                            print("Wallet: ", wallet)
-                            btcPurchased = ogAmount / startPrice
-                            startUserPrice = btcPurchased * currentPrice
-                            ogPrice = currentUserPrice
-                            break
-                        else:
-                            break
+                    if time.time() > future:
+                        print("Entered OG Lowering")
+                        income = btcPurchased * currentPrice
+                        wallet += (income - workingWallet)
+                        print("Wallet: ", wallet)
+                        btcPurchased = ogAmount / startPrice
+                        startUserPrice = btcPurchased * currentPrice
+                        ogPrice = currentUserPrice
+                        break
                 else:
                     continue
 
