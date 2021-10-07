@@ -3,13 +3,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 
-driver = webdriver.Safari()
+driver = webdriver.Chrome(ChromeDriverManager().install())
 driver.get("https://www.dailyfx.com/bitcoin")
 
 wallet = float(input("How much would you like to invest: "))
 ogAmount = wallet
 workingWallet = wallet
+initAmount = wallet
 
 time.sleep(5)
 
@@ -19,27 +21,6 @@ btcPurchased = wallet/startPrice
 startUserPrice = btcPurchased*startPrice
 ogPrice = startUserPrice
 print(startUserPrice)
-
-
-def buy():
-    global wallet
-    global workingWallet
-    global ogAmount
-
-    if wallet >= ogAmount:
-        workingWallet = ogAmount
-        wallet = wallet - ogAmount
-    elif wallet < ogAmount:
-        ogAmount = wallet
-        workingWallet = wallet
-        wallet = 0
-
-def sell():
-    global wallet
-    global workingWallet
-
-    wallet += workingWallet
-    workingWallet = 0
 
 
 while True:
@@ -56,11 +37,13 @@ while True:
 
         if currentUserPrice > ogPrice:
             if currentUserPrice > startUserPrice:
-                income = btcPurchased*currentPrice
-                wallet += (income-workingWallet)
-                btcPurchased = ogAmount / currentPrice
+                income = btcPurchased*currentPrice #Checking current withdraw amount
+                wallet += (income-workingWallet) #Adding profit to wallet
+                btcPurchased = ogAmount / currentPrice #Buying btc at current price with initial amount
                 startUserPrice = btcPurchased * currentPrice
                 print("Wallet: ", wallet)
+                if income > initAmount:
+                    ogAmount = initAmount
                 continue
 
         elif currentUserPrice < ogPrice:
@@ -68,7 +51,7 @@ while True:
             if currentUserPrice < startUserPrice:
 
                 now = time.time()
-                future = now + 7
+                future = now + 60
 
                 while True:
                     if time.time() > future:
@@ -79,17 +62,13 @@ while True:
                         btcPurchased = ogAmount / startPrice
                         startUserPrice = btcPurchased * currentPrice
                         ogPrice = currentUserPrice
+                        if income < ogAmount:
+                            ogAmount = income
                         break
                 else:
                     continue
 
 
+
+
         startUserPrice = currentUserPrice
-
-
-
-
-
-
-
-
