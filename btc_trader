@@ -12,6 +12,7 @@ wallet = float(input("How much would you like to invest: "))
 ogAmount = wallet
 workingWallet = wallet
 initAmount = wallet
+buyingPrice = 0.00
 
 time.sleep(5)
 
@@ -38,10 +39,11 @@ while True:
         if currentUserPrice > ogPrice:
             if currentUserPrice > startUserPrice:
                 income = btcPurchased*currentPrice #Checking current withdraw amount
-                wallet += (income-workingWallet) #Adding profit to wallet
+                wallet += (income-ogAmount) #Adding profit to wallet
                 btcPurchased = ogAmount / currentPrice #Buying btc at current price with initial amount
                 startUserPrice = btcPurchased * currentPrice
                 print("Wallet: ", wallet)
+                print("Money in play: ", ogAmount)
                 if income > initAmount:
                     ogAmount = initAmount
                 continue
@@ -51,20 +53,31 @@ while True:
             if currentUserPrice < startUserPrice:
 
                 now = time.time()
-                future = now + 60
+                future = now + 10
 
                 while True:
+
+                    currentPrice = float(btc.get_attribute('data-value'))
+                    currentUserPrice = btcPurchased * currentPrice
+
+                    if currentUserPrice > startUserPrice:
+                        if currentUserPrice > ogPrice:
+                            break
+
                     if time.time() > future:
                         print("Entered OG Lowering")
                         income = btcPurchased * currentPrice
-                        wallet += (income - workingWallet)
+                        wallet += (income-startUserPrice)
                         print("Wallet: ", wallet)
                         btcPurchased = ogAmount / startPrice
                         startUserPrice = btcPurchased * currentPrice
                         ogPrice = currentUserPrice
                         if income < ogAmount:
                             ogAmount = income
+                        print("Money in play: ", ogAmount)
                         break
+
+                    startUserPrice = currentUserPrice
                 else:
                     continue
 
