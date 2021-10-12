@@ -1,30 +1,29 @@
 import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+#from webdriver_manager.chrome import ChromeDriverManager
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
+#driver = webdriver.Chrome(ChromeDriverManager().install())
+driver = webdriver.Safari()
 driver.get("https://www.dailyfx.com/bitcoin")
 
 wallet = float(input("How much would you like to invest: "))
-ogAmount = wallet
-workingWallet = wallet
+tradingAmount = wallet # Money currently being traded
 initAmount = wallet
-buyingPrice = 0.00
 
 time.sleep(5)
 
 btc = driver.find_element_by_xpath('//*[@id="dfx-instrumentPageBar-BITCOIN"]/div[1]/div/div[1]/div[2]/div[1]')
 startPrice = float(btc.get_attribute('data-value'))
-btcPurchased = wallet/startPrice
+btcPurchased = wallet/startPrice # Buying btc
 startUserPrice = btcPurchased*startPrice
-ogPrice = startUserPrice
+ogPrice = startUserPrice # Baseline Amount above which trading takes place, when price keeps dropping baseline is reduced as well
 print(startUserPrice)
 
 
 while True:
+
+    #startUserPrice - Price in the previous iteration
+    #currentUserPrice - Price in the current iteration
 
     currentPrice = float(btc.get_attribute('data-value'))
     currentUserPrice = btcPurchased*currentPrice
@@ -39,13 +38,13 @@ while True:
         if currentUserPrice > ogPrice:
             if currentUserPrice > startUserPrice:
                 income = btcPurchased*currentPrice #Checking current withdraw amount
-                wallet += (income-ogAmount) #Adding profit to wallet
-                btcPurchased = ogAmount / currentPrice #Buying btc at current price with initial amount
+                wallet += (income-tradingAmount) #Adding profit to wallet
+                btcPurchased = tradingAmount / currentPrice #Buying btc at current price with initial amount
                 startUserPrice = btcPurchased * currentPrice
                 print("Wallet: ", wallet)
-                print("Money in play: ", ogAmount)
-                if income > initAmount:
-                    ogAmount = initAmount
+                print("Money in play: ", tradingAmount)
+                if wallet > income:
+                    tradingAmount = initAmount
                 continue
 
         elif currentUserPrice < ogPrice:
@@ -67,14 +66,14 @@ while True:
                     if time.time() > future:
                         print("Entered OG Lowering")
                         income = btcPurchased * currentPrice
-                        wallet += (income-startUserPrice)
+                        wallet += (income-tradingAmount)
                         print("Wallet: ", wallet)
-                        btcPurchased = ogAmount / startPrice
+                        btcPurchased = tradingAmount / startPrice
                         startUserPrice = btcPurchased * currentPrice
                         ogPrice = currentUserPrice
-                        if income < ogAmount:
-                            ogAmount = income
-                        print("Money in play: ", ogAmount)
+                        if wallet < tradingAmount:  # Reducing trading amount if money is getting lost
+                            tradingAmount = income
+                        print("Money in play: ", tradingAmount)
                         break
 
                     startUserPrice = currentUserPrice
@@ -85,3 +84,11 @@ while True:
 
 
         startUserPrice = currentUserPrice
+
+
+
+
+
+
+
+
